@@ -1,0 +1,28 @@
+---
+import AboutMeComponent from "../components/AboutMe.astro";
+import BlogPostsLink from "../components/BlogPostsLink.astro";
+import BlogSelfIntroLink from "../components/BlogSelfIntroLink.astro";
+import BlogTagsLink from "../components/BlogTagsLink.astro";
+import Layout from "../layouts/Layout.astro";
+import { getAllTags, getNumberOfPages, getPosts, getRankedPosts } from "../lib/notion/client";
+import { NUMBER_OF_POSTS_PER_PAGE } from "../server-constants";
+import styles from '../styles/blog.module.css'
+
+const [posts, rankedPosts, tags, numberOfPages] = await Promise.all([
+  getPosts(NUMBER_OF_POSTS_PER_PAGE),
+  getRankedPosts(),
+  getAllTags(),
+  getNumberOfPages(),
+])
+---
+
+<Layout>
+  <div slot="main" class={styles.main}>
+    <AboutMeComponent />
+  </div>
+  <div slot="aside" class={styles.aside}>
+    <BlogSelfIntroLink />
+    <BlogPostsLink heading="Recommended" posts={rankedPosts} />
+    <BlogTagsLink heading="Categories" tags={tags} />
+  </div>
+</Layout>
